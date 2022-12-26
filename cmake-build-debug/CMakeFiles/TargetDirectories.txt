@@ -1,0 +1,3 @@
+C:/Users/Dansa/Documents/cs projects/C++/project/cmake-build-debug/CMakeFiles/project.dir
+C:/Users/Dansa/Documents/cs projects/C++/project/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Dansa/Documents/cs projects/C++/project/cmake-build-debug/CMakeFiles/rebuild_cache.dir

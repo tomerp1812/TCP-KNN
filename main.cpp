@@ -136,6 +136,7 @@ void newVectorClassification(Database *dataBase, Distance *dis) {
  * @return The name of the closest point to the input vector.
  */
 int main(int argc, char const *argv[]) {
+    if(argc !=3 )
     //initialize the database
     auto *dataBase = initializeDatabase(argv);
 

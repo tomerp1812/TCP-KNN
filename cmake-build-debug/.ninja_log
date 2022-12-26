@@ -1,0 +1,11 @@
+# ninja log v5
+12	1590	6937889096886994	CMakeFiles/project.dir/Chebyshev.cpp.obj	4f31c8324ff1d58a
+2	1608	6937889096957324	CMakeFiles/project.dir/Canberra.cpp.obj	7430918ecfaf1178
+58	1620	6937889097417001	CMakeFiles/project.dir/Euclidean.cpp.obj	10acda099478d1e4
+19	1703	6937889098146992	CMakeFiles/project.dir/Catalog.cpp.obj	74dbee3d30d14f66
+29	1787	6937889099156980	CMakeFiles/project.dir/main.cpp.obj	7da32f48609aa7a6
+47	2156	6937889102866987	CMakeFiles/project.dir/Database.cpp.obj	d7340edbf0f3799b
+1621	2453	6937889105787073	CMakeFiles/project.dir/Minkowski.cpp.obj	1fc1dfbcf0a11d37
+1599	2495	6937889106237021	CMakeFiles/project.dir/Distance.cpp.obj	e692978286488c4c
+1608	2552	6937889106856936	CMakeFiles/project.dir/Manhattan.cpp.obj	95991bd6ab8c29d4
+2553	2865	6937889109906981	project.exe	11c6b98d5c18196b
