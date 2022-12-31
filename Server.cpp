@@ -31,7 +31,6 @@ string Server::getClassifiction(string* data) {
 
     //??? the new vector is now inserted with the arguments???
     //??? meaning need to call create vector from here or to change it???
-
     int k = stoi(data[2]);
     //initialize the database
     auto *dataBase = initializeDatabase(file, k);
@@ -48,7 +47,7 @@ string Server::getClassifiction(string* data) {
 
 }
 
-string* Server::breakBuffer(char *buffer, string* brokedBuffer) {
+string* Server::breakBuffer(char *buffer, string* brokeBuffer) {
     // create first string - vector
     string vectorString;
     int i = 0;
@@ -57,7 +56,7 @@ string* Server::breakBuffer(char *buffer, string* brokedBuffer) {
         vectorString += buffer[i];
         i++;
     }
-    brokedBuffer[0] = vectorString;
+    brokeBuffer[0] = vectorString;
 
     // create second string - distance (a 3 letters word)
     string distanceString;
@@ -66,7 +65,7 @@ string* Server::breakBuffer(char *buffer, string* brokedBuffer) {
         distanceString += buffer[i];
         i++;
     }
-    brokedBuffer[1] = distanceString;
+    brokeBuffer[1] = distanceString;
 
     // create third string - k (a number)
     string kString;
@@ -75,9 +74,9 @@ string* Server::breakBuffer(char *buffer, string* brokedBuffer) {
         kString += buffer[i];
         i++;
     }
-    brokedBuffer[2] = kString;
+    brokeBuffer[2] = kString;
 
-    return brokedBuffer;
+    return brokeBuffer;
 }
 
 void Server::tcpSocket() {
@@ -114,39 +113,41 @@ void Server::tcpSocket() {
         perror("error accepting client");
     }
 
-    //set a buffer to hold the incoming data
-    char buffer[4096];
-    int expected_data_len = sizeof(buffer);
-    long read_bytes = recv(client_sock, buffer, expected_data_len, 0);
-    if (read_bytes == 0){
-        cout << "Connection is closed" << endl;
-    }else if  (read_bytes < 0){
-        perror("error in receiving data");
-    }else{
-        //buffer stores the received data! (vector, distance, k)
-        cout << buffer << endl;
+    while(true) {
+        //set a buffer to hold the incoming data
+        char buffer[4096];
+        int expected_data_len = sizeof(buffer);
+        long read_bytes = recv(client_sock, buffer, expected_data_len, 0);
+        if (read_bytes == 0) {
+            cout << "Connection is closed" << endl;
+            break;
+        } else if (read_bytes < 0) {
+            perror("error in receiving data");
+            continue;
+        } else {
+            //buffer stores the received data! (vector, distance, k)
+        }
+
+        // convert buffer into array of 3 strings and send it to getClassification
+        auto *brokeBuffer = new string[3];
+        breakBuffer(buffer, brokeBuffer);
+        //getting the classification of the new vector
+        string classification = getClassifiction(brokeBuffer);
+        delete[] brokeBuffer;
+
+        //moving the classification back to buffer for to send it back to the client
+        for (int i = 0; i < classification.length(); ++i) {
+            buffer[i] = classification.at(i);
+        }
+        //adding '\0' to the end of the string
+        buffer[classification.length()] = '\0';
+
+        long send_bytes = send(client_sock, buffer, read_bytes, 0);
+        if (send_bytes < 0) {
+            perror("error sending to client");
+        }
     }
-
-    // convert buffer into array of 3 strings and send it to getClassification
-    string* brokedBuffer = new string[3];
-    breakBuffer(buffer, brokedBuffer);
-    //getting the classification of the new vector
-    string classification = getClassifiction(brokedBuffer);
-    delete[] brokedBuffer;
-
-    //moving the classification back to buffer for to send it back to the client
-    for (int i = 0; i < classification.length(); ++i) {
-        buffer[i] = classification.at(i);
-    }
-    //adding '\0' to the end of the string
-    buffer[classification.length()] = '\0';
-
-    long send_bytes = send(client_sock, buffer, read_bytes, 0);
-    if (send_bytes < 0){
-        perror("error sending to client");
-    }
-
-    close (sock);
+        close(sock);
 }
 
 
@@ -159,7 +160,6 @@ void Server::tcpSocket() {
  * @return The name of the closest point to the input vector.
  */
 int main(int argc, char const *argv[]) {
-
     auto* server = new Server(argv);
     server->tcpSocket();
     return 0;

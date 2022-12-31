@@ -23,7 +23,7 @@ public:
     explicit Server(char const *argv[]);
     string getClassifiction(string* brokedBuffer);
     void tcpSocket();
-    string* breakBuffer(char *buffer, string* brokedBuffer);
+    string* breakBuffer(char *buffer, string* brokeBuffer);
     const string &getFile() const;
 
 };
