@@ -78,7 +78,7 @@ void tcpSocket() {
     //set a buffer to hold the incoming data
     char buffer[4096];
     int expected_data_len = sizeof(buffer);
-    int read_bytes = recv(client_sock, buffer, expected_data_len, 0);
+    long read_bytes = recv(client_sock, buffer, expected_data_len, 0);
     if (read_bytes == 0){
         cout << "Connection is closed" << endl;
     }else if  (read_bytes < 0){
@@ -92,12 +92,12 @@ void tcpSocket() {
     //To do !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     //getting the classification of the new vector
-    string classification = getClassifiction();
+    //string classification = getClassifiction();
 
     //moving the classification back to buffer for to send it back to the client
     //To do!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    int send_bytes = send(client_sock, buffer, read_bytes, 0);
+    long send_bytes = send(client_sock, buffer, read_bytes, 0);
     if (send_bytes < 0){
         perror("error sending to client");
     }
