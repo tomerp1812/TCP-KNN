@@ -16,7 +16,7 @@
 
 bool checkStr(string str);
 vector<double> createVec();
-Database *initializeDatabase(char const *argv[]);
+Database *initializeDatabase(string file, int k);
 Distance *chooseDis(const char *disAlg);
 string newVectorClassification(Database *dataBase, Distance *dis);
 

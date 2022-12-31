@@ -9,12 +9,16 @@
 Server::Server(char const *argv[]) {
     this->file = argv[1];
     this->port = stoi(argv[2]);
-    this->socket = socket(AF_INET, SOCK_STREAM, 0);
+    this->sock = socket(AF_INET, SOCK_STREAM, 0);
+}
+
+const string &Server::getFile() const {
+    return file;
 }
 
 // To do!!!!!!!!!!!!!!!!!!!!!
 //send right arguments by the new order
-string getClassifiction(const char* arr[]) {
+string Server::getClassifiction(const char* arr[]) {
     //old order:
     //argv[1] = k
     //argv[2] = file
@@ -41,11 +45,11 @@ string getClassifiction(const char* arr[]) {
 
 }
 
-void tcpSocket() {
+void Server::tcpSocket() {
 
     //checking creation succeed
-    if (socket < 0) {
-        perror("error creating socket");
+    if (sock < 0) {
+        perror("error creating sock");
     }
 
     //for sending a group of parameters and get them back we create a struct
@@ -58,19 +62,19 @@ void tcpSocket() {
     sin.sin_port = htons(port);
 
     //bind server to the port and check succeed
-    if(bind(socket, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
-        perror("error binding socket");
+    if(bind(sock, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
+        perror("error binding sock");
     }
 
     //setting to let up to 5 clients waiting
-    if (listen(socket, 5) < 0) {
-        perror("error listening to a socket");
+    if (listen(sock, 5) < 0) {
+        perror("error listening to a sock");
     }
 
     //accept an incoming client connection
     struct sockaddr_in client_sin;
     unsigned int addr_len = sizeof(client_sin);
-    int client_sock = accept(socket, (struct sockaddr *) &client_sin, &addr_len);
+    int client_sock = accept(sock, (struct sockaddr *) &client_sin, &addr_len);
     if (client_sock < 0) {
         perror("error accepting client");
     }
@@ -102,7 +106,7 @@ void tcpSocket() {
         perror("error sending to client");
     }
 
-    close (socket);
+    close (sock);
 }
 
 
@@ -117,7 +121,7 @@ void tcpSocket() {
 int main(int argc, char const *argv[]) {
 
     auto* server = new Server(argv);
-    tcpSocket();
+    server->tcpSocket();
     return 0;
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

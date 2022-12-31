@@ -20,7 +20,7 @@ int main(int argc, char const *argv[]) {
     const int port_number = stoi(argv[2]);
     int sock = (int)socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0){
-        cout << "error creating socket" << endl;
+        cout << "error creating sock" << endl;
     }
     struct sockaddr_in sin;
     memset(&sin, 0, sizeof (sin));

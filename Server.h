@@ -18,17 +18,15 @@ class Server {
 private:
     string file;
     int port;
-    int socket;
+    int sock;
 public:
-    Server(char const *argv[]);
+    explicit Server(char const *argv[]);
     string getClassifiction(const char* arr[]);
     void tcpSocket();
 
+    const string &getFile() const;
+
 };
-
-
-
-
 
 
 
