@@ -35,7 +35,7 @@ public:
 
     void add(string newName, vector<double> unclassifiedVector);
 
-    void findKNN(Distance &d, vector<double> unclassifiedVector);
+    string findKNN(Distance &d, vector<double> unclassifiedVector);
 
     string classifyVector();
 

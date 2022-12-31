@@ -150,13 +150,13 @@ void Database::setData() {
 /**
  * This function finds the k's nearest neighbors using the select algorithm.
  * */
-void Database::findKNN(Distance &d, vector<double> unclassifiedVector) {
+string Database::findKNN(Distance &d, vector<double> unclassifiedVector) {
     for (auto &i: m_data) {
         i.setDistance(d.distance(i.getVector(), unclassifiedVector));
     }
     select(0, (int) m_data.size() - 1);
     string classified = classifyVector();
-    cout << classified << endl;
+    return classified;
 }
 
 /**

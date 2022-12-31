@@ -1,7 +1,7 @@
 a.out: main.o Distance.o Canberra.o Catalog.o Chebyshev.o Database.o Euclidean.o Manhattan.o Minkowski.o
 	g++ -std=c++11 -Wall -o a.out main.o Distance.o Canberra.o Catalog.o Chebyshev.o Database.o Euclidean.o Manhattan.o Minkowski.o
 
-main.o: main.cpp
+main.o: Server.cpp
 	g++ -std=c++11 -Wall -c main.cpp
 
 Distance.o: Distance.cpp
