@@ -18,7 +18,7 @@ const string &Server::getFile() const {
 
 // To do!!!!!!!!!!!!!!!!!!!!!
 //send right arguments by the new order
-string Server::getClassifiction(const char* arr[]) {
+string Server::getClassifiction(string* data) {
     //old order:
     //argv[1] = k
     //argv[2] = file
@@ -32,17 +32,52 @@ string Server::getClassifiction(const char* arr[]) {
     //??? the new vector is now inserted with the arguments???
     //??? meaning need to call create vector from here or to change it???
 
-    int k = stoi(arr[2]);
+    int k = stoi(data[2]);
     //initialize the database
     auto *dataBase = initializeDatabase(file, k);
 
     //choose the distance algorithm
-    const char *disAlg = arr[1];
+    char* disAlg = new char[data[1].length() + 1];
+    data[1].copy(disAlg, data[1].length(), 0);
+    disAlg[data[1].length()] = '\0';
     Distance *dis = chooseDis(disAlg);
+    delete[] disAlg;
 
     //return  a new classified vector
     return newVectorClassification(dataBase, dis);
 
+}
+
+string* Server::breakBuffer(char *buffer, string* brokedBuffer) {
+    // create first string - vector
+    string vectorString;
+    int i = 0;
+    while ((buffer[i] >= '0' && buffer[i] <= '9') || buffer[i] == ' ')
+    {
+        vectorString += buffer[i];
+        i++;
+    }
+    brokedBuffer[0] = vectorString;
+
+    // create second string - distance (a 3 letters word)
+    string distanceString;
+    for (int j = 0; j < 3; j++)
+    {
+        distanceString += buffer[i];
+        i++;
+    }
+    brokedBuffer[1] = distanceString;
+
+    // create third string - k (a number)
+    string kString;
+    while (buffer[i] != '\n')
+    {
+        kString += buffer[i];
+        i++;
+    }
+    brokedBuffer[2] = kString;
+
+    return brokedBuffer;
 }
 
 void Server::tcpSocket() {
@@ -93,13 +128,18 @@ void Server::tcpSocket() {
     }
 
     // convert buffer into array of 3 strings and send it to getClassification
-    //To do !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    string* brokedBuffer = new string[3];
+    breakBuffer(buffer, brokedBuffer);
     //getting the classification of the new vector
-    //string classification = getClassifiction();
+    string classification = getClassifiction(brokedBuffer);
+    delete[] brokedBuffer;
 
     //moving the classification back to buffer for to send it back to the client
-    //To do!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    for (int i = 0; i < classification.length(); ++i) {
+        buffer[i] = classification.at(i);
+    }
+    //adding '\0' to the end of the string
+    buffer[classification.length()] = '\0';
 
     long send_bytes = send(client_sock, buffer, read_bytes, 0);
     if (send_bytes < 0){

@@ -21,9 +21,9 @@ private:
     int sock;
 public:
     explicit Server(char const *argv[]);
-    string getClassifiction(const char* arr[]);
+    string getClassifiction(string* brokedBuffer);
     void tcpSocket();
-
+    string* breakBuffer(char *buffer, string* brokedBuffer);
     const string &getFile() const;
 
 };
