@@ -32,15 +32,17 @@ int main(int argc, char const *argv[]) {
         exit(1);
     }
     while(true){
-        char data_addr[4096];
-        scanf("%s", data_addr);
+        char data_addr[4096] = {0};
+        string str;
+        getline(cin, str);
+        str.copy(data_addr, str.length(), 0);
         int data_len = (int) strlen(data_addr);
         long sent_bytes = send(sock, data_addr, data_len, 0);
         if(sent_bytes < 0){
             cout << "ERROR" << endl;
             exit(1);
         }
-        char buffer[4096];
+        char buffer[4096] = {0};
         int expected_data_len = sizeof(buffer);
         long read_bytes = recv(sock, buffer, expected_data_len, 0);
         if(read_bytes == 0){

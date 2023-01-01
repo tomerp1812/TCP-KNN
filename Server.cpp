@@ -6,15 +6,12 @@
 
 #include "Server.h"
 
-Server::Server(char const *argv[]) {
-    this->file = argv[1];
-    this->port = stoi(argv[2]);
+Server::Server(Database* dB, const string& port) {
+    this->database = dB;
+    this->port = stoi(port);
     this->sock = socket(AF_INET, SOCK_STREAM, 0);
 }
 
-const string &Server::getFile() const {
-    return file;
-}
 
 // To do!!!!!!!!!!!!!!!!!!!!!
 //send right arguments by the new order
@@ -31,9 +28,11 @@ string Server::getClassifiction(string* data) {
 
     //??? the new vector is now inserted with the arguments???
     //??? meaning need to call create vector from here or to change it???
-    int k = stoi(data[2]);
-    //initialize the database
-    auto *dataBase = initializeDatabase(file, k);
+//    int k = stoi(data[2]);
+//    //initialize the database
+//    auto *dataBase = initializeDatabase(file, k);
+
+    database->setK(stoi(data[2]));
 
     //choose the distance algorithm
     char* disAlg = new char[data[1].length() + 1];
@@ -43,7 +42,7 @@ string Server::getClassifiction(string* data) {
     delete[] disAlg;
 
     //return  a new classified vector
-    return newVectorClassification(dataBase, dis);
+    return newVectorClassification(this->database, dis, data[0]);
 
 }
 
@@ -66,16 +65,15 @@ string* Server::breakBuffer(char *buffer, string* brokeBuffer) {
         i++;
     }
     brokeBuffer[1] = distanceString;
-
+    i++;
     // create third string - k (a number)
     string kString;
-    while (buffer[i] != '\n')
+    while (buffer[i] != '\0')
     {
         kString += buffer[i];
         i++;
     }
     brokeBuffer[2] = kString;
-
     return brokeBuffer;
 }
 
@@ -115,7 +113,7 @@ void Server::tcpSocket() {
 
     while(true) {
         //set a buffer to hold the incoming data
-        char buffer[4096];
+        char buffer[4096] = {0};
         int expected_data_len = sizeof(buffer);
         long read_bytes = recv(client_sock, buffer, expected_data_len, 0);
         if (read_bytes == 0) {
@@ -127,28 +125,30 @@ void Server::tcpSocket() {
         } else {
             //buffer stores the received data! (vector, distance, k)
         }
-
         // convert buffer into array of 3 strings and send it to getClassification
         auto *brokeBuffer = new string[3];
         breakBuffer(buffer, brokeBuffer);
+
         //getting the classification of the new vector
         string classification = getClassifiction(brokeBuffer);
         delete[] brokeBuffer;
 
+        char sendBuffer[4096] = {0};
         //moving the classification back to buffer for to send it back to the client
         for (int i = 0; i < classification.length(); ++i) {
-            buffer[i] = classification.at(i);
+            sendBuffer[i] = classification.at(i);
         }
         //adding '\0' to the end of the string
-        buffer[classification.length()] = '\0';
-
-        long send_bytes = send(client_sock, buffer, read_bytes, 0);
+        sendBuffer[classification.length()] = '\0';
+        cout << buffer[2] << endl;
+        long send_bytes = send(client_sock, sendBuffer, read_bytes, 0);
         if (send_bytes < 0) {
             perror("error sending to client");
         }
     }
         close(sock);
 }
+
 
 
 /**
@@ -160,7 +160,10 @@ void Server::tcpSocket() {
  * @return The name of the closest point to the input vector.
  */
 int main(int argc, char const *argv[]) {
-    auto* server = new Server(argv);
+
+    //initialize the database
+    auto *dataBase = initializeDatabase(argv[1], 1);
+    auto* server = new Server(dataBase, argv[2]);
     server->tcpSocket();
     return 0;
 

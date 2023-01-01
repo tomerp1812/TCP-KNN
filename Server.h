@@ -16,11 +16,11 @@
 
 class Server {
 private:
-    string file;
+    Database* database;
     int port;
     int sock;
 public:
-    explicit Server(char const *argv[]);
+    explicit Server(Database* database, const string& port);
     string getClassifiction(string* brokedBuffer);
     void tcpSocket();
     string* breakBuffer(char *buffer, string* brokeBuffer);

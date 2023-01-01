@@ -38,17 +38,17 @@ bool checkStr(string str) {
  * to the end of the vector.
  * @return Vector of doubles.
  */
-vector<double> createVec() {
+vector<double> createVec(string vec) {
     //initialization.
-    string str;
+    //string str;
     vector<double> v;
     double num;
     //extracts characters from cin and stores them into str until the delimitation character delim is found.
-    getline(cin, str);
+    //getline(cin, str);
     //input stream class to operate on strings.
-    istringstream vStream(str);
+    istringstream vStream(vec);
     //checking if the input is valid and returns a blank vector in accordance.
-    if (!checkStr(str)) {
+    if (!checkStr(vec)) {
         return v;
     }
     //adding values to the vector.
@@ -102,8 +102,9 @@ Distance *chooseDis(const char *disAlg) {
  * @param dataBase a pointer to the database
  * @param dis the distance function to be used
  */
-string newVectorClassification(Database *dataBase, Distance *dis) {
-    vector<double> v1 = createVec();
+string newVectorClassification(Database *dataBase, Distance *dis, string vec) {
+    vector<double> v1 = createVec(vec);
+    cout << dataBase->getMData()->at(0).getVector().size() << endl;
     if (v1.empty()) {
         cout << "Wrong input! Try again" << endl;
         return "1";
