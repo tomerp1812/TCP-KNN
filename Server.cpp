@@ -46,11 +46,12 @@ string Server::getClassifiction(string* data) {
 
 }
 
-string* Server::breakBuffer(char *buffer, string* brokeBuffer) {
+void Server::breakBuffer(char *buffer, string* brokeBuffer) {
     // create first string - vector
     string vectorString;
     int i = 0;
-    while ((buffer[i] >= '0' && buffer[i] <= '9') || buffer[i] == ' ')
+    while ((buffer[i] >= '0' && buffer[i] <= '9') || buffer[i] == ' ' || buffer[i] == '-'
+    || buffer[i] == '.' || buffer[i] == 'E')
     {
         vectorString += buffer[i];
         i++;
@@ -74,7 +75,6 @@ string* Server::breakBuffer(char *buffer, string* brokeBuffer) {
         i++;
     }
     brokeBuffer[2] = kString;
-    return brokeBuffer;
 }
 
 void Server::tcpSocket() {
@@ -102,7 +102,7 @@ void Server::tcpSocket() {
     if (listen(sock, 5) < 0) {
         perror("error listening to a sock");
     }
-
+while(true) {
     //accept an incoming client connection
     struct sockaddr_in client_sin;
     unsigned int addr_len = sizeof(client_sin);
@@ -111,7 +111,7 @@ void Server::tcpSocket() {
         perror("error accepting client");
     }
 
-    while(true) {
+    while (true) {
         //set a buffer to hold the incoming data
         char buffer[4096] = {0};
         int expected_data_len = sizeof(buffer);
@@ -128,6 +128,9 @@ void Server::tcpSocket() {
         // convert buffer into array of 3 strings and send it to getClassification
         auto *brokeBuffer = new string[3];
         breakBuffer(buffer, brokeBuffer);
+        if(brokeBuffer[0] == "-1" && brokeBuffer->length() == 2){
+            break;
+        }
 
         //getting the classification of the new vector
         string classification = getClassifiction(brokeBuffer);
@@ -140,12 +143,12 @@ void Server::tcpSocket() {
         }
         //adding '\0' to the end of the string
         sendBuffer[classification.length()] = '\0';
-        cout << buffer[2] << endl;
         long send_bytes = send(client_sock, sendBuffer, read_bytes, 0);
         if (send_bytes < 0) {
             perror("error sending to client");
         }
     }
+}
         close(sock);
 }
 

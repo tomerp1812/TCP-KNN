@@ -38,6 +38,10 @@ int main(int argc, char const *argv[]) {
         str.copy(data_addr, str.length(), 0);
         int data_len = (int) strlen(data_addr);
         long sent_bytes = send(sock, data_addr, data_len, 0);
+        if(str == "-1"){
+            close(sock);
+            break;
+        }
         if(sent_bytes < 0){
             cout << "ERROR" << endl;
             exit(1);
@@ -47,6 +51,7 @@ int main(int argc, char const *argv[]) {
         long read_bytes = recv(sock, buffer, expected_data_len, 0);
         if(read_bytes == 0){
             cout << "continue" << endl;
+            continue;
         }
         else if (read_bytes < 0){
             cout << "ERROR" << endl;
@@ -54,6 +59,10 @@ int main(int argc, char const *argv[]) {
         }
         else {
             cout << buffer << endl;
+            if (strcmp(buffer, "invalid input") == 0){
+                close(sock);
+                break;
+            }
             continue;
         }
         close(sock);
