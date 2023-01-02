@@ -13,8 +13,12 @@ A third part of an ongoing project about vector classification.
 
 ## Description
 
-In this part we were asked to implement a TCP socket connection between a client and a server, that will run in an endless loop our verctor classification algorithm which was implemented in the previeus part with the KNN algorithm, which is among the most common of machine learning algorithms and is used in a variety of fields.
+In this part we were asked to implement a TCP socket connection between a client and a server, that will run in an endless loop and will run our verctor classification algorithm which was implemented in the previeus part.
 
+<img width="300" alt="image" src="https://user-images.githubusercontent.com/112869076/210267297-323a511d-25c7-42ab-9493-fa0617a78b81.png">
+
+
+The classification algorithm is implemented with the KNN algorithm, which is among the most common of machine learning algorithms and is used in a variety of fields.
 The algorithm works as follows:
 * Calculation of the distance between the input vector and all classified vectors.
 * Finding K nearest neighbors.
@@ -28,18 +32,20 @@ prespective that Lacks of dependence on implementation, in order to expand the p
 
 We used encapsulation for the distance classes and additionally made distance abstract.
 Thanks to this, our KNN calculation function that received an object of type Distance could use any of the distance functions independently of them.
+In addition, since in the future we may want to change the internal implementation of the vector classification or add additional attributes to it, we implemented the relationship between the client and the server in such a way that does not create a dependency between the implementation of the classification algorithm and the communication process between them.
 
 While planning the task and out of an ambition to improve the running time, we noticed that we don't need to sort the entire database, but it is enough for us to find the K members whose distance is the smallest from the newly inserted vector, and therefore we chose to use the Select algorithm which has an average time complexity of O(n).
 
 ## Course of the program
 
-First in the command line, the program gets inputs for size K, file, and distance in the following format: "a.out k file distance"
-* K - the number of neighbors to acount in the calculation.
-* File- the name of the classified vector file.
+The client sends the information received from the user to the server. The information is received as follows: "vector distance k"
+* Vector - a new vector to classify.
 * Distance - the distance metric we want to use.
+* K - the number of neighbors to acount in the calculation.
 
-Then, when an input is entered to the screen (a vector) the program will print the classification of that vector, using the KNN algorithm, accordingly
-to the entered k, file and distance and wait for the next input indefinitely.
+The server classified the received vector with the KNN algorithm and according to the received metric distance and K (neighbors), and then sends the classification back to the client.
+
+The client prints the received answer to the screen on a separate line and receives the next input from the user.
 
 ## Dealing with edge cases
 
@@ -94,12 +100,14 @@ $ make
 
 ```bash
 # Run the program on Linux:
-$ ./a.out K "path to a classified file" Distance algorithm
+$ ./server.out "path to a classified file" port
+$ ./client.out ip port
 ```
 
 ```bash
 # Run the program on Windows:
-$ a.out K "path to a classified file" Distance algorithm
+$ server.out "path to a classified file" port
+$ client.out ip port
 ```
 
   
