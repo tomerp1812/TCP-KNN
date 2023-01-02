@@ -1,11 +1,11 @@
 server: Server.o classificationLogic.o Distance.o Canberra.o Catalog.o Chebyshev.o Database.o Euclidean.o Manhattan.o Minkowski.o
 	g++ -std=c++11 -Wall -o server.out Server.o classificationLogic.o Distance.o Canberra.o Catalog.o Chebyshev.o Database.o Euclidean.o Manhattan.o Minkowski.o
 
-client: client.o
-	g++ -std=c++11 -Wall -o client.out client.o
+client: Client.o
+	g++ -std=c++11 -Wall -o client.out Client.o
 
-client.o: Client.cpp
-	g++ -std=c++11 -Wall -c client.cpp
+Client.o: Client.cpp
+	g++ -std=c++11 -Wall -c Client.cpp
 
 Server.o: Server.cpp
 	g++ -std=c++11 -Wall -c Server.cpp

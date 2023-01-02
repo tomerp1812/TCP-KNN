@@ -4,14 +4,14 @@
 
 #ifndef PROJECT_CLIENT_H
 #define PROJECT_CLIENT_H
-
+using namespace std;
 class Client{
 private:
     int clientSocket;
     int serverPort;
     const char *serverIpAddr;
 public:
-    explicit Client(const std::string& port, const char* ipAddr);
+    explicit Client(const string& port, const char* ipAddr);
     void initializeSocket();
     void communicate();
 

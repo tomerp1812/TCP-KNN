@@ -1,15 +1,11 @@
 #include <iostream>
 #include <sys/socket.h>
-#include <cstdio>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <cstring>
-#include <regex>
 #include "Client.h"
-
-
-using namespace std;
+#include <cstdio>
+#include <cstring>
 
 
 bool isPositiveInteger(const string &s) {
