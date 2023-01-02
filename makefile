@@ -4,7 +4,7 @@ server: Server.o classificationLogic.o Distance.o Canberra.o Catalog.o Chebyshev
 client: client.o
 	g++ -std=c++11 -Wall -o client.out client.o
 
-client.o: client.cpp
+client.o: Client.cpp
 	g++ -std=c++11 -Wall -c client.cpp
 
 Server.o: Server.cpp

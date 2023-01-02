@@ -21,7 +21,7 @@ private:
     int sock;
 public:
     explicit Server(Database* database, const string& port);
-    string getClassifiction(string* brokedBuffer);
+    string getClassifiction(string* brokeBuffer);
     void tcpSocket();
     bool breakBuffer(char *buffer, string* brokeBuffer);
 

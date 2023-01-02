@@ -15,7 +15,7 @@ Server::Server(Database* dB, const string& port) {
 
 // To do!!!!!!!!!!!!!!!!!!!!!
 //send right arguments by the new order
-string Server::getClassifiction(string* data) {
+string Server::getClassifiction(string* brokeBuffer) {
     //old order:
     //argv[1] = k
     //argv[2] = file
@@ -28,16 +28,16 @@ string Server::getClassifiction(string* data) {
 
     //??? the new vector is now inserted with the arguments???
     //??? meaning need to call create vector from here or to change it???
-//    int k = stoi(data[2]);
+//    int k = stoi(brokeBuffer[2]);
 //    //initialize the database
 //    auto *dataBase = initializeDatabase(file, k);
 
-    database->setK(stoi(data[2]));
+    database->setK(stoi(brokeBuffer[2]));
 
     //choose the distance algorithm
-    char* disAlg = new char[data[1].length() + 1];
-    data[1].copy(disAlg, data[1].length(), 0);
-    disAlg[data[1].length()] = '\0';
+    char* disAlg = new char[brokeBuffer[1].length() + 1];
+    brokeBuffer[1].copy(disAlg, brokeBuffer[1].length(), 0);
+    disAlg[brokeBuffer[1].length()] = '\0';
     Distance *dis = chooseDis(disAlg);
     if (dis == nullptr){
         return "invalid input";
@@ -45,7 +45,7 @@ string Server::getClassifiction(string* data) {
     delete[] disAlg;
 
     //return  a new classified vector
-    return newVectorClassification(this->database, dis, data[0]);
+    return newVectorClassification(this->database, dis, brokeBuffer[0]);
 
 }
 
@@ -124,12 +124,12 @@ void Server::tcpSocket() {
         perror("error listening to a sock");
     }
 while(true) {
-    //accept an incoming client connection
+    //accept an incoming Client connection
     struct sockaddr_in client_sin;
     unsigned int addr_len = sizeof(client_sin);
     int client_sock = accept(sock, (struct sockaddr *) &client_sin, &addr_len);
     if (client_sock < 0) {
-        perror("error accepting client");
+        perror("error accepting Client");
     }
 
     while (true) {
@@ -161,7 +161,7 @@ while(true) {
 
 
         char sendBuffer[4096] = {0};
-        //moving the classification back to buffer for to send it back to the client
+        //moving the classification back to buffer for to send it back to the Client
         for (unsigned int i = 0; i < classification.length(); ++i) {
             sendBuffer[i] = classification.at(i);
         }
@@ -169,7 +169,7 @@ while(true) {
         sendBuffer[classification.length()] = '\0';
         long send_bytes = send(client_sock, sendBuffer, classification.length(), 0);
         if (send_bytes < 0) {
-            perror("error sending to client");
+            perror("error sending to Client");
         }
     }
 }

@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <regex>
-
+#include "Client.h"
 
 
 using namespace std;
@@ -26,35 +26,58 @@ int main(int argc, char const *argv[]) {
         cout << "Invalid input!" << endl;
         exit(1);
     }
+    auto* client = new Client(argv[2], argv[1]);
+    client->initializeSocket();
+    client->communicate();
+    return 0;
+}
 
-    if(!isPositiveInteger(argv[2]) || stoi(argv[2]) <= 0 || stoi(argv[2]) > 65535 ){
+Client::Client(const string& port, const char* ipAddr) {
+    if(!isPositiveInteger(port) || stoi(port) <= 0 || stoi(port) > 65535 ){
         exit(1);
     }
+    this->serverPort = stoi(port);
+    this->serverIpAddr = ipAddr;
+    this->clientSocket = -1;
+}
 
-    const char* ip_address = argv[1];
-    const int port_number = stoi(argv[2]);
-    int sock = (int)socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0){
+int Client::getSocket() const {
+    return clientSocket;
+}
+
+void Client::setSocket(int socket) {
+    this->clientSocket = socket;
+}
+
+void Client::initializeSocket() {
+    setSocket((int)socket(AF_INET, SOCK_STREAM, 0));
+
+    if (getSocket() < 0){
         cout << "error creating sock" << endl;
+        exit(1);
     }
     struct sockaddr_in sin;
     memset(&sin, 0, sizeof (sin));
     sin.sin_family = AF_INET;
-    sin.sin_addr.s_addr = inet_addr(ip_address);
-    sin.sin_port = htons(port_number);
-    if(connect(sock, (struct sockaddr *) &sin, sizeof(sin)) < 0){
+    sin.sin_addr.s_addr = inet_addr(serverIpAddr);
+    sin.sin_port = htons(serverPort);
+    if(connect(getSocket(), (struct sockaddr *) &sin, sizeof(sin)) < 0){
         cout << "error connecting to server" << endl;
         exit(1);
     }
+
+}
+
+void Client::communicate() {
     while(true){
         char data_addr[4096] = {0};
         string str;
         getline(cin, str);
         str.copy(data_addr, str.length(), 0);
         int data_len = (int) strlen(data_addr);
-        long sent_bytes = send(sock, data_addr, data_len, 0);
+        long sent_bytes = send(getSocket(), data_addr, data_len, 0);
         if(str == "-1"){
-            close(sock);
+            close(getSocket());
             break;
         }
         if(sent_bytes < 0){
@@ -63,9 +86,8 @@ int main(int argc, char const *argv[]) {
         }
         char buffer[4096] = {0};
         int expected_data_len = sizeof(buffer);
-        long read_bytes = recv(sock, buffer, expected_data_len, 0);
+        long read_bytes = recv(getSocket(), buffer, expected_data_len, 0);
         if(read_bytes == 0){
-            cout << "continue" << endl;
             continue;
         }
         else if (read_bytes < 0){
@@ -76,9 +98,7 @@ int main(int argc, char const *argv[]) {
             cout << buffer << endl;
             continue;
         }
-        close(sock);
+        close(getSocket());
         break;
     }
-
-    return 0;
 }

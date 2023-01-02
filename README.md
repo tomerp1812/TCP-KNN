@@ -13,7 +13,7 @@ A third part of an ongoing project about vector classification.
 
 ## Description
 
-In this part we were asked to implement a TCP socket connection between a client and a server, that will run in an endless loop and will run our verctor classification algorithm which was implemented in the previeus part.
+In this part we were asked to implement a TCP clientSocket connection between a client and a server, that will run in an endless loop and will run our verctor classification algorithm which was implemented in the previeus part.
 
 <img width="300" alt="image" src="https://user-images.githubusercontent.com/112869076/210267297-323a511d-25c7-42ab-9493-fa0617a78b81.png">
 
