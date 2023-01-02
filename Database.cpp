@@ -22,7 +22,7 @@ int Database::getK() const {
  * @param k - value for size of the neighbors group
  * */
 void Database::setK(int k) {
-    if (k > m_data.size()) {
+    if (k > (int) m_data.size()) {
         m_k = (int) m_data.size();
     } else {
         m_k = k;

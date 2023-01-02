@@ -19,5 +19,6 @@ vector<double> createVec();
 Database *initializeDatabase(string file, int k);
 Distance *chooseDis(const char *disAlg);
 string newVectorClassification(Database *dataBase, Distance *dis, string vec);
+bool isPositiveInteger(const string &s);
 
 #endif //PROJECT_CLASSIFICATIONLOGIC_H

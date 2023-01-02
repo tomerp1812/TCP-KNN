@@ -32,6 +32,15 @@ bool checkStr(string str) {
     return true;
 }
 
+bool isPositiveInteger(const string &s) {
+    if (s.empty() || ((!isdigit(s[0])))) return false;
+
+    char *p;
+    strtol(s.c_str(), &p, 10);
+
+    return (*p == 0);
+}
+
 /**
  * This function calls an auxiliary function named "checkStr",
  * to check if the input is valid, and then adds the values from the user
@@ -91,8 +100,7 @@ Distance *chooseDis(const char *disAlg) {
     } else if (strcmp(disAlg, "MIN") == 0) {
         return new Minkowski();
     } else {
-        cout << "Wrong input! None valid distance calculation." << endl;
-        exit(1);
+        return nullptr;
     }
 }
 
@@ -104,15 +112,12 @@ Distance *chooseDis(const char *disAlg) {
  */
 string newVectorClassification(Database *dataBase, Distance *dis, string vec) {
     vector<double> v1 = createVec(vec);
-    cout << dataBase->getMData()->at(0).getVector().size() << endl;
     if (v1.empty()) {
-        cout << "Wrong input! Try again" << endl;
-        return "1";
+        return "invalid input";
     }
     //check if the vector's size match the size of the vectors from the given file
     if (v1.size() != dataBase->getMData()->at(0).getVector().size()) {
-        cout << "Unmatched size! Try again" << endl;
-        return "1";
+        return "invalid input";
     }
 
     //find the classification of the vector using the KNN algorithm

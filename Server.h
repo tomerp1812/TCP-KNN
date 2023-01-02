@@ -23,7 +23,7 @@ public:
     explicit Server(Database* database, const string& port);
     string getClassifiction(string* brokedBuffer);
     void tcpSocket();
-    void breakBuffer(char *buffer, string* brokeBuffer);
+    bool breakBuffer(char *buffer, string* brokeBuffer);
 
 };
 

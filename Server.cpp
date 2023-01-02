@@ -39,6 +39,9 @@ string Server::getClassifiction(string* data) {
     data[1].copy(disAlg, data[1].length(), 0);
     disAlg[data[1].length()] = '\0';
     Distance *dis = chooseDis(disAlg);
+    if (dis == nullptr){
+        return "invalid input";
+    }
     delete[] disAlg;
 
     //return  a new classified vector
@@ -46,7 +49,14 @@ string Server::getClassifiction(string* data) {
 
 }
 
-void Server::breakBuffer(char *buffer, string* brokeBuffer) {
+bool Server::breakBuffer(char *buffer, string* brokeBuffer) {
+    string input;
+    int t = 0;
+    while(buffer[t] != '\0'){
+        input += buffer[t];
+        t++;
+    }
+    input += '\0';
     // create first string - vector
     string vectorString;
     int i = 0;
@@ -56,7 +66,14 @@ void Server::breakBuffer(char *buffer, string* brokeBuffer) {
         vectorString += buffer[i];
         i++;
     }
+    //vectorString.at(vectorString.length() - 1) = '\0';
+    if(!checkStr(vectorString)){
+        return false;
+    }
     brokeBuffer[0] = vectorString;
+    if(input.length() - brokeBuffer[0].length() < 5){
+        return false;
+    }
 
     // create second string - distance (a 3 letters word)
     string distanceString;
@@ -74,7 +91,11 @@ void Server::breakBuffer(char *buffer, string* brokeBuffer) {
         kString += buffer[i];
         i++;
     }
+    if(!isPositiveInteger(kString)){
+        return false;
+    }
     brokeBuffer[2] = kString;
+    return true;
 }
 
 void Server::tcpSocket() {
@@ -114,10 +135,10 @@ while(true) {
     while (true) {
         //set a buffer to hold the incoming data
         char buffer[4096] = {0};
+        string classification;
         int expected_data_len = sizeof(buffer);
         long read_bytes = recv(client_sock, buffer, expected_data_len, 0);
         if (read_bytes == 0) {
-            cout << "Connection is closed" << endl;
             break;
         } else if (read_bytes < 0) {
             perror("error in receiving data");
@@ -127,23 +148,26 @@ while(true) {
         }
         // convert buffer into array of 3 strings and send it to getClassification
         auto *brokeBuffer = new string[3];
-        breakBuffer(buffer, brokeBuffer);
         if(brokeBuffer[0] == "-1" && brokeBuffer->length() == 2){
             break;
         }
+        if(breakBuffer(buffer, brokeBuffer)){
+            //getting the classification of the new vector
+            classification = getClassifiction(brokeBuffer);
+            delete[] brokeBuffer;
+        }else{
+            classification = "invalid input";
+        }
 
-        //getting the classification of the new vector
-        string classification = getClassifiction(brokeBuffer);
-        delete[] brokeBuffer;
 
         char sendBuffer[4096] = {0};
         //moving the classification back to buffer for to send it back to the client
-        for (int i = 0; i < classification.length(); ++i) {
+        for (unsigned int i = 0; i < classification.length(); ++i) {
             sendBuffer[i] = classification.at(i);
         }
         //adding '\0' to the end of the string
         sendBuffer[classification.length()] = '\0';
-        long send_bytes = send(client_sock, sendBuffer, read_bytes, 0);
+        long send_bytes = send(client_sock, sendBuffer, classification.length(), 0);
         if (send_bytes < 0) {
             perror("error sending to client");
         }
@@ -163,21 +187,17 @@ while(true) {
  * @return The name of the closest point to the input vector.
  */
 int main(int argc, char const *argv[]) {
-
+    //checking validation of arguments.
+    if(argc != 3){
+        exit(1);
+    }
+    //checking validation of port
+    if(!isPositiveInteger(argv[2]) || stoi(argv[2]) <= 0 || stoi(argv[2]) > 65535 ){
+        exit(1);
+    }
     //initialize the database
     auto *dataBase = initializeDatabase(argv[1], 1);
     auto* server = new Server(dataBase, argv[2]);
     server->tcpSocket();
     return 0;
-
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    
-
-
-
-
-
 }
-
-

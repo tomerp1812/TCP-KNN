@@ -10,4 +10,4 @@ add_executable(project
         Minkowski.h Server.h classificationLogic.cpp classificationLogic.h)
 
 add_executable(client
-        client/main.cpp)
+        client.cpp)

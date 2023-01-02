@@ -5,17 +5,32 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <cstring>
-
+#include <regex>
 
 
 
 using namespace std;
 
+
+bool isPositiveInteger(const string &s) {
+    if (s.empty() || ((!isdigit(s[0])))) return false;
+
+    char *p;
+    strtol(s.c_str(), &p, 10);
+
+    return (*p == 0);
+}
+
 int main(int argc, char const *argv[]) {
     if (argc != 3) {
-        cout << "Invalid input!" << std::endl;
+        cout << "Invalid input!" << endl;
         exit(1);
     }
+
+    if(!isPositiveInteger(argv[2]) || stoi(argv[2]) <= 0 || stoi(argv[2]) > 65535 ){
+        exit(1);
+    }
+
     const char* ip_address = argv[1];
     const int port_number = stoi(argv[2]);
     int sock = (int)socket(AF_INET, SOCK_STREAM, 0);
@@ -59,10 +74,6 @@ int main(int argc, char const *argv[]) {
         }
         else {
             cout << buffer << endl;
-            if (strcmp(buffer, "invalid input") == 0){
-                close(sock);
-                break;
-            }
             continue;
         }
         close(sock);
