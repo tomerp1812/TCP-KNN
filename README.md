@@ -43,16 +43,21 @@ The client sends the information received from the user to the server. The infor
 * Distance - the distance metric we want to use.
 * K - the number of neighbors to acount in the calculation.
 
-The server classified the received vector with the KNN algorithm and according to the received metric distance and K (neighbors), and then sends the classification back to the client.
+The server classified the resulting vector with the KNN algorithm and according to the received metric distance and K (neighbors), and then sends the classification back to the client.
 
 The client prints the received answer to the screen on a separate line and receives the next input from the user.
 
+The client is connected to the same port during the entire program run, but when the client sends "-1" the client will close the socket, on the other hand, the server will continue to listen to the next client.
+
 ## Dealing with edge cases
 
-* If a user entered incorrect path or a string that does not match any of the 5 distance functions, we exit the program.
-* In cases where a vector entered by the user doesn't contain numbers or alternatively isn't in the appropriate size for the vectors in the database, the program       will print an error and request a new input.
-* For vectors that are already classified, we will look at the length of the first vector entered into the database and based on that we will decide whether to       enter vectors into the database or not. That is, we will not insert them when their length does not match his.
-* If the k inserted in the arguments is less than or equal to zero, we will exit the program. Or alternatively if k is greater than the number of vectors in the       database we will make k the same as the number of vectors to prevent illegal access.
+* If the user entered an input not in the order discussed above, the server will return an invalid input message and request a new input.
+* In cases where a vector entered by the user does not contain numbers or alternatively is not the appropriate size for the vectors in the database, the server will return an invalid input message and request a new input.
+* If the customer enters a distance function corresponding to one of the five distance functions, the server will return an invalid input message and request a new input.
+* If the k inserted into the arguments is less than or equal to zero, we will exit the program. Or alternatively if k is greater than the number of vectors in the database, we will turn k into the number of vectors to prevent illegal access.
+* In cases where the client was unable to connect to the server's port or IP, we will exit directly from the client's program.
+* If the server fails to connect to any port, we will exit the program.
+* If the client sends -1 as input to the server, the server will close the communication with the client and wait for the next user, at this time the client will close its socket and end the program.
 
 ## Distances
 
