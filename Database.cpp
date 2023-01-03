@@ -149,6 +149,9 @@ void Database::setData() {
 
 /**
  * This function finds the k's nearest neighbors using the select algorithm.
+ * @param d - the metric distance algorithm to use
+ * @param unclassifiedVector - the new inserted vector to be classified
+ * @return the classification of the new vector
  * */
 string Database::findKNN(Distance &d, vector<double> unclassifiedVector) {
     for (auto &i: m_data) {

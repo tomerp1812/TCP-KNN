@@ -7,7 +7,7 @@
 
 
 /**
- * It checks if a string is a valid number
+ * This function checks if a string is a valid number
  *
  * @param str the string to check.
  *
@@ -32,12 +32,20 @@ bool checkStr(string str) {
     return true;
 }
 
+/**
+ * This function checks if a string is a positive number
+ *
+ * @param str the string to check.
+ *
+ * @return true if the string is a positive number, and false if it is not.
+ */
 bool isPositiveInteger(const string &s) {
-    if (s.empty() || ((!isdigit(s[0])))) return false;
+    if (s.empty() || ((!isdigit(s[0])))) {
+        return false;
+    }
 
     char *p;
     strtol(s.c_str(), &p, 10);
-
     return (*p == 0);
 }
 
@@ -48,12 +56,9 @@ bool isPositiveInteger(const string &s) {
  * @return Vector of doubles.
  */
 vector<double> createVec(string vec) {
-    //initialization.
-    //string str;
     vector<double> v;
     double num;
-    //extracts characters from cin and stores them into str until the delimitation character delim is found.
-    //getline(cin, str);
+
     //input stream class to operate on strings.
     istringstream vStream(vec);
     //checking if the input is valid and returns a blank vector in accordance.
@@ -70,8 +75,10 @@ vector<double> createVec(string vec) {
 }
 
 /**
- * This function receives the command line arguments and returns a pointer to a Database object.
- * @param argv the command line arguments
+ * This function receives the classified file and the k (number of neighbors) and returns a
+ * pointer to a Database object.
+ * @param file - the file with the classified vectors
+ * @param k - number of neighbors
  * @return A pointer to a Database object.
  */
 Database *initializeDatabase(string file, int k) {
@@ -85,6 +92,8 @@ Database *initializeDatabase(string file, int k) {
 
 /**
  * This function returns a pointer to a Distance object based on its given parameter.
+ * Notice that the function returns a nullptr if the parameter it receives doesn't appeal
+ * with any of the distance algorithms.
  * @param disAlg the distance algorithm which we want to create an object from
  * @return A pointer to a Distance object.
  */
@@ -109,6 +118,8 @@ Distance *chooseDis(const char *disAlg) {
  * KNN algorithm, and prints the classification of the inserted vector.
  * @param dataBase a pointer to the database
  * @param dis the distance function to be used
+ * @param vec the new inserted vector
+ * @return a string with the new vector's classification
  */
 string newVectorClassification(Database *dataBase, Distance *dis, string vec) {
     vector<double> v1 = createVec(vec);

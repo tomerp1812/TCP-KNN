@@ -1,5 +1,5 @@
 //
-// Created by Tomer on 01/12/2022.
+// Created by Dansa on 31/12/2022.
 //
 
 
@@ -12,34 +12,27 @@ Server::Server(Database* dB, const string& port) {
     this->sock = socket(AF_INET, SOCK_STREAM, 0);
 }
 
-
-// To do!!!!!!!!!!!!!!!!!!!!!
-//send right arguments by the new order
+/**
+ * This function gets the data sent from the client and returns a classification of the new vector
+ * brokeBuffer[0] = vector
+ * brokeBuffer[1] = distance
+ * brokeBuffer[2] = k
+ * @param brokeBuffer - an array storing the data received from the client
+ * @return a string storing the classification
+ */
 string Server::getClassifiction(string* brokeBuffer) {
-    //old order:
-    //argv[1] = k
-    //argv[2] = file
-    //argv[3] = Distance
-
-    //new order:
-    //arr[0] = vector
-    //arr[1] = distance
-    //arr[2] = k
-
-    //??? the new vector is now inserted with the arguments???
-    //??? meaning need to call create vector from here or to change it???
-//    int k = stoi(brokeBuffer[2]);
-//    //initialize the database
-//    auto *dataBase = initializeDatabase(file, k);
-
+    //when the database is created it has a default of k=1
     database->setK(stoi(brokeBuffer[2]));
 
     //choose the distance algorithm
     char* disAlg = new char[brokeBuffer[1].length() + 1];
     brokeBuffer[1].copy(disAlg, brokeBuffer[1].length(), 0);
     disAlg[brokeBuffer[1].length()] = '\0';
+    //checking which distance algorithm to use
     Distance *dis = chooseDis(disAlg);
+    //checking the validation of the new distance object
     if (dis == nullptr){
+        delete[] disAlg;
         return "invalid input";
     }
     delete[] disAlg;
@@ -49,6 +42,12 @@ string Server::getClassifiction(string* brokeBuffer) {
 
 }
 
+/**
+ * This function divide and extract relevant data from the client message and store it in an array
+ * @param brokeBuffer - the array to store the divided data
+ * @param buffer - the data
+ * @return true if there were no problems with the client message and false otherwise
+ */
 bool Server::breakBuffer(char *buffer, string* brokeBuffer) {
     string input;
     int t = 0;
@@ -57,40 +56,42 @@ bool Server::breakBuffer(char *buffer, string* brokeBuffer) {
         t++;
     }
     input += '\0';
+
     // create first string - vector
     string vectorString;
     int i = 0;
     while ((buffer[i] >= '0' && buffer[i] <= '9') || buffer[i] == ' ' || buffer[i] == '-'
-    || buffer[i] == '.' || buffer[i] == 'E')
-    {
+    || buffer[i] == '.' || buffer[i] == 'E') {
         vectorString += buffer[i];
         i++;
     }
-    //vectorString.at(vectorString.length() - 1) = '\0';
+    //check the validation of the vector
     if(!checkStr(vectorString)){
         return false;
     }
     brokeBuffer[0] = vectorString;
+
+    //check the validation of the rest of the client data
     if(input.length() - brokeBuffer[0].length() < 5){
         return false;
     }
 
     // create second string - distance (a 3 letters word)
     string distanceString;
-    for (int j = 0; j < 3; j++)
-    {
+    for (int j = 0; j < 3; j++) {
         distanceString += buffer[i];
         i++;
     }
     brokeBuffer[1] = distanceString;
     i++;
+
     // create third string - k (a number)
     string kString;
-    while (buffer[i] != '\0')
-    {
+    while (buffer[i] != '\0') {
         kString += buffer[i];
         i++;
     }
+    //check the validation of the k
     if(!isPositiveInteger(kString)){
         return false;
     }
@@ -98,6 +99,9 @@ bool Server::breakBuffer(char *buffer, string* brokeBuffer) {
     return true;
 }
 
+/**
+ * This function implements a TCP socket connection protocol between a client and a server.
+ */
 void Server::tcpSocket() {
 
     //checking creation succeed
@@ -148,18 +152,18 @@ while(true) {
         }
         // convert buffer into array of 3 strings and send it to getClassification
         auto *brokeBuffer = new string[3];
+        //check if the client wants to close the connection
         if(brokeBuffer[0] == "-1" && brokeBuffer->length() == 2){
             break;
         }
         if(breakBuffer(buffer, brokeBuffer)){
             //getting the classification of the new vector
             classification = getClassifiction(brokeBuffer);
-            delete[] brokeBuffer;
         }else{
             classification = "invalid input";
         }
 
-
+        delete[] brokeBuffer;
         char sendBuffer[4096] = {0};
         //moving the classification back to buffer for to send it back to the Client
         for (unsigned int i = 0; i < classification.length(); ++i) {
@@ -183,8 +187,7 @@ while(true) {
  * It then finds the k nearest neighbors of that vector and classified the inserted vector
  * to be of the same classification as the biggest group inside the k nearest neighbors.
  * @param argc the number of arguments
- * @param argv
- * @return The name of the closest point to the input vector.
+ * @param argv the file and the port
  */
 int main(int argc, char const *argv[]) {
     //checking validation of arguments.
@@ -197,6 +200,8 @@ int main(int argc, char const *argv[]) {
     }
     //initialize the database
     auto *dataBase = initializeDatabase(argv[1], 1);
+
+    //create a server and start a connection
     auto* server = new Server(dataBase, argv[2]);
     server->tcpSocket();
     return 0;
