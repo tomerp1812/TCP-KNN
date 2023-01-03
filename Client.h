@@ -4,6 +4,7 @@
 
 #ifndef PROJECT_CLIENT_H
 #define PROJECT_CLIENT_H
+/* It's a class that represents a client that connects to a server and sends messages to it */
 using namespace std;
 class Client{
 private:
