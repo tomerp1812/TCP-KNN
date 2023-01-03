@@ -51,12 +51,12 @@ The client is connected to the same port during the entire program run, but when
 
 ## Dealing with edge cases
 
-*If the user entered an input not in the order discussed above, the server will return an invalid input message and request a new input.
+* If the user entered an input not in the order discussed above, the server will return an invalid input message and request a new input.
 * In cases where a vector entered by the user does not contain numbers or alternatively is not the appropriate size for the vectors in the database, the server will return an invalid input message and request a new input.
-*If the customer enters a distance function corresponding to one of the five distance functions, the server will return an invalid input message and request a new input.
+* If the customer enters a distance function corresponding to one of the five distance functions, the server will return an invalid input message and request a new input.
 * If the k inserted into the arguments is less than or equal to zero, we will exit the program. Or alternatively if k is greater than the number of vectors in the database, we will turn k into the number of vectors to prevent illegal access.
-*In cases where the client was unable to connect to the server's port or IP, we will exit directly from the client's program.
-*If the server fails to connect to any port, we will exit the program.
+* In cases where the client was unable to connect to the server's port or IP, we will exit directly from the client's program.
+* If the server fails to connect to any port, we will exit the program.
 * If the client sends -1 as input to the server, the server will close the communication with the client and wait for the next user, at this time the client will close its socket and end the program.
 
 ## Distances
