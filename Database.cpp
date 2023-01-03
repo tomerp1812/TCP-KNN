@@ -24,6 +24,7 @@ int Database::getK() const {
 void Database::setK(int k) {
     if (k > (int) m_data.size()) {
         m_k = (int) m_data.size();
+        //case k = 0
     } else if(k == 0){
         m_k = 1;
     }else{
