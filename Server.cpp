@@ -106,7 +106,7 @@ void Server::tcpSocket() {
 
     //checking creation succeed
     if (sock < 0) {
-        perror("error creating sock");
+        exit(1);
     }
 
     //for sending a group of parameters and get them back we create a struct
@@ -120,12 +120,12 @@ void Server::tcpSocket() {
 
     //bind server to the port and check succeed
     if(bind(sock, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
-        perror("error binding sock");
+        exit(1);
     }
 
     //setting to let up to 5 clients waiting
     if (listen(sock, 5) < 0) {
-        perror("error listening to a sock");
+        exit(1);
     }
 while(true) {
     //accept an incoming Client connection
@@ -133,7 +133,7 @@ while(true) {
     unsigned int addr_len = sizeof(client_sin);
     int client_sock = accept(sock, (struct sockaddr *) &client_sin, &addr_len);
     if (client_sock < 0) {
-        perror("error accepting Client");
+        exit(1);
     }
 
     while (true) {
@@ -145,8 +145,7 @@ while(true) {
         if (read_bytes == 0) {
             break;
         } else if (read_bytes < 0) {
-            perror("error in receiving data");
-            continue;
+            exit(1);
         } else {
             //buffer stores the received data! (vector, distance, k)
         }
@@ -173,7 +172,7 @@ while(true) {
         sendBuffer[classification.length()] = '\0';
         long send_bytes = send(client_sock, sendBuffer, classification.length(), 0);
         if (send_bytes < 0) {
-            perror("error sending to Client");
+            exit(1);
         }
     }
 }
