@@ -1,3 +1,5 @@
+all: server client
+
 server: Server.o classificationLogic.o Distance.o Canberra.o Catalog.o Chebyshev.o Database.o Euclidean.o Manhattan.o Minkowski.o
 	g++ -std=c++11 -Wall -o server.out Server.o classificationLogic.o Distance.o Canberra.o Catalog.o Chebyshev.o Database.o Euclidean.o Manhattan.o Minkowski.o
 
