@@ -27,7 +27,7 @@ The algorithm works as follows:
 <img width="501" alt="image" src="https://user-images.githubusercontent.com/112869076/206932807-d6fa4737-e8ad-40cb-b828-bff296607365.png">
 
 
-Because this project is a continious one, our implementation derived from a wide 
+Because this project is a continious one, our implementation derived from a wide  
 prespective that Lacks of dependence on implementation, in order to expand the project in the future and leverage it.
 
 We used encapsulation for the distance classes and additionally made distance abstract.
